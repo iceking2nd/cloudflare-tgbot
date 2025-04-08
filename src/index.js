@@ -8,32 +8,35 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
-import _ from "lodash";
-import cmd from "./cmds.js";
+import { trimStart } from 'lodash-es';
+import cmd from './cmds.js';
 
 export default {
 	async fetch(request, env, ctx) {
-		console.debug("request headers: ", Object.fromEntries(request.headers));
-		if (request.headers.get("x-telegram-bot-api-secret-token") !== env.SECRET_TOKEN) {
-			return new Response("Forbidden", { status: 403 });
+		console.debug('request headers: ', Object.fromEntries(request.headers));
+		console.debug(env.SECRET_TOKEN);
+		if (request.headers.get('x-telegram-bot-api-secret-token') !== env.SECRET_TOKEN) {
+			return new Response('Forbidden', { status: 403 });
 		}
 		const body = await request.json();
-		console.debug("body: ", body);
+		console.debug('body: ', body);
 		let t = [];
 
 		const message = body.message || body.edited_message || body.channel_post || body.edited_channel_post;
 		if (message) {
-			t = message.text.split(" ",1);
+			t = message.text.split(' ', 1);
 		} else {
-			return new Response("OK", { status: 200 });
+			return new Response('OK', { status: 200 });
 		}
-		t[1] = _.trimStart(message.text, `${t[0]} `)
+		t[1] = trimStart(message.text, `${t[0]} `);
 		switch (t[0].toLowerCase()) {
-			case "/chat_id":
+			case '/chat_id':
 				return cmd.chat_id(message);
+			case '/help':
+				return cmd.help(message);
 			default:
 				break;
 		}
-		return new Response("OK", { status: 200 });
-	},
+		return new Response('OK', { status: 200 });
+	}
 };
