@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cloudflare-tgbot",
+  "main": "src/index.js",
+  "compatibility_date": "2025-02-04",
+  "observability": {
+    "enabled": false
+  },
+  "dev": {
+    "port": 8787,
+    "ip": "0.0.0.0",
+    "local_protocol": "http"
+  }
+}
